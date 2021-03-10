@@ -376,11 +376,12 @@ static void polyfill_backend_user(struct afunix_polyfil_t *pf)
         afunix_debug_printf("[%d]\ttarget address is %d\n",  pf->user[1], pf->next_send_address);
         for (int i = 0; i < AFUNIX_POLYFILL_MAX_CONNECTIONS; i++) {
             if (pf->client_connections[i] != 0) {
-                if (pf->client_connections[i] ==  pf->next_send_address ||
-                         pf->next_send_address  == 0) {
+                if (pf->client_connections[i] == pf->next_send_address) {
                     send(pf->client_connections[i],  pf->buf, len, 0);
-                    pf->next_send_address = 0;
                     return;
+                }
+                if (pf->next_send_address == 0) {
+                    send(pf->client_connections[i],  pf->buf, len, 0);
                 }
             }
         }
